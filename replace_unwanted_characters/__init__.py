@@ -12,7 +12,7 @@ from picard.ui.options import OptionsPage, register_options_page
 
 from picard import config, log
 
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 
 DEFAULT_TAGS = ["album", "artist", "title", "albumartist", "releasetype", "label"]
 
