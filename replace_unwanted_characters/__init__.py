@@ -308,7 +308,8 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
                     tags.append(item.text().strip())
 
         self.per_tag_table.setRowCount(0)
-        all_keys = self._current_default_keys()
+        # convert available keys to a set for containment checks
+        all_keys = set(self._current_default_keys())
 
         try:
             per_tag_saved = self.config.setting["replace_unwanted_characters_per_tag_tables"]
@@ -322,6 +323,8 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
             explicit = tag in per_tag_saved
             log.debug(f"{PLUGIN_NAME}: Building per-tag table row for tag '{tag}': explicit={explicit}")
 
+
+            # UI widget stuff
             # Is Active checkbox
             active_chk = QtWidgets.QCheckBox()
             active_chk_container = QtWidgets.QWidget()
@@ -355,6 +358,9 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
                 # if using default, set selection to all keys
                 if default:
                     keys_list = all_keys
+                else:
+                    # prune saved keys to current available keys
+                    keys_list = [k for k in keys_list if k in all_keys]
                 self._per_tag_selection[tag] = set(keys_list)
                 self._per_tag_saved[tag] = set(keys_list)
                 self._per_tag_active[tag] = active
@@ -385,9 +391,9 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
         if not hasattr(self, "per_tag_table"):
             return False
         for row in range(self.per_tag_table.rowCount()):
-            item = self.per_tag_table.item(row, 0)
+            item = self.per_tag_table.item(row, 1)  # tag is in column 1
             if item and item.text() == tag:
-                widget = self.per_tag_table.cellWidget(row, 1)
+                widget = self.per_tag_table.cellWidget(row, 2)  # Use Default checkbox is in column 2
                 if widget:
                     layout = widget.layout()
                     if layout and layout.count() > 0:
