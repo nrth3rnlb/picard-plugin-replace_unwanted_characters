@@ -286,26 +286,50 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
             btn.setEnabled(not chk.isChecked())
 
     def _update_mapping_button_text(self, button, tag, all_keys):
+        """
+        Update the text of the mapping button to reflect the current selection of mapped characters for a given tag.
+
+        Args:
+            button (QPushButton): The button whose text will be updated.
+            tag (str): The tag for which the mapping is being displayed.
+            all_keys (Iterable[str]): The list of all possible mapping keys.
+        """
         selected_keys = sorted(list(self._per_tag_selection.get(tag, set())))
         num_selected = len(selected_keys)
 
         if num_selected == 0:
-            button.setText(f"none selected")
+            button.setText("none selected")
             return
 
         # Create a preview string of selected characters
         preview_str = " ".join(selected_keys)
 
-        # I'm unsure whether this might make sense after all.
-        # Therefore, commented out.
-        # preview_limit = 20  # Max length of the character preview
-        # if len(preview_str) > preview_limit:
-        #     # Truncate the string if it's too long
-        #     preview_str = preview_str[:preview_limit].rsplit(' ', 1)[0] + "…"
+        # Truncate the preview string if it's too long
+        preview_limit = 20  # Max length of the character preview
+        if len(preview_str) > preview_limit:
+            # Truncate the string at the last space before the limit, if possible
+            truncated = preview_str[:preview_limit]
+            if ' ' in truncated:
+                truncated = truncated.rsplit(' ', 1)[0]
+            preview_str = truncated + "…"
 
         button.setText(f"{preview_str}")
 
     def _make_mapping_button_handler(self, tag, button):
+        """
+        Factory method that creates a handler function for the mapping button of a specific tag.
+
+        The returned handler, when invoked (typically by a button click), opens a dialog allowing
+        the user to select which character mappings to apply for the given tag. It updates the
+        internal selection state and the button's display text accordingly.
+
+        Args:
+            tag (str): The tag for which the mapping is being edited.
+            button (QPushButton): The button that triggers the mapping dialog.
+
+        Returns:
+            function: A closure to be connected as a slot for the button's clicked signal.
+        """
         def on_button_clicked():
             all_keys = self._current_default_keys()
             current_selection = self._per_tag_selection.get(tag, set())
@@ -340,7 +364,14 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
 
             # Update button text and state
             use_default_widget = self.per_tag_table.cellWidget(row, 1)
-            use_default = isinstance(use_default_widget, QtWidgets.QCheckBox) and use_default_widget.isChecked()
+            # Extract QCheckBox from the container widget
+            use_default = False
+            if use_default_widget is not None and isinstance(use_default_widget, QtWidgets.QWidget):
+                layout = use_default_widget.layout()
+                if layout is not None and layout.count() > 0:
+                    checkbox = layout.itemAt(0).widget()
+                    if isinstance(checkbox, QtWidgets.QCheckBox):
+                        use_default = checkbox.isChecked()
             if use_default:
                 self._per_tag_selection[tag] = new_keys_set
 
@@ -349,6 +380,22 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
                 self._update_mapping_button_text(button, tag, new_keys)
 
     def _make_use_default_handler(self, tag, button, chk):
+        """
+        Creates a handler function for the 'use default' checkbox for a given tag.
+
+        When the checkbox is toggled, this handler updates the per-tag selection state:
+        - If checked, saves the current selection, selects all available keys, and disables the mapping button.
+        - If unchecked, restores the saved selection and enables the mapping button.
+        The handler also updates the button text to reflect the current selection.
+
+        Args:
+            tag (str): The tag associated with the checkbox and button.
+            button (QPushButton): The button used to edit the mapping for the tag.
+            chk (QCheckBox): The checkbox widget that triggers this handler.
+
+        Returns:
+            function: A function to be connected to the checkbox's toggled signal.
+        """
         def on_toggled(checked):
             all_keys = self._current_default_keys()
             if checked:
@@ -365,18 +412,6 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
             self._update_mapping_button_text(button, tag, all_keys)
 
         return on_toggled
-
-    def _make_list_item_changed_handler(self, tag, list_w):
-        def on_item_changed(item):
-            # update selection set for this tag only if list is enabled (not use-default)
-            if list_w.isEnabled():
-                checked = {list_w.item(i).text() for i in range(list_w.count()) if
-                           list_w.item(i).checkState() == QtCore.Qt.Checked}
-                self._per_tag_selection[tag] = set(checked)
-                # also update saved selection so toggling Use Default later restores this
-                self._per_tag_saved[tag] = set(checked)
-
-        return on_item_changed
 
     # ---------- load / save ----------
     def load(self):
@@ -468,11 +503,10 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
 
                 if not use_default:
                     selected_keys = self._per_tag_selection.get(tag, set())
-                    if selected_keys:
-                        per_tag_tables[tag] = list(selected_keys)
+                    # Always save explicit configuration, even if it's an empty list
+                    per_tag_tables[tag] = list(selected_keys)
 
         config["replace_unwanted_characters_per_tag_tables"] = per_tag_tables
-
 register_options_page(ReplaceUnwantedCharactersOptionsPage)
 
 metadata.register_track_metadata_processor(replace_unwanted_characters)
