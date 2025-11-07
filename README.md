@@ -18,7 +18,8 @@ Replace Unwanted Characters is a MusicBrainz Picard plugin that replaces charact
 ## Usage
 
 - The plugin automatically processes track and album metadata and replaces configured characters for the enabled tags.
-- It is possible to configure a separate assignment for each day.- In scripts or tagger rules you can use `$replace_unwanted(<tagname>)` to apply the replacement to a specific tag.
+- It is possible to configure a separate assignment for each tag.
+- In scripts or tagger rules you can use `$replace_unwanted(<tagname>)` to apply the replacement to a specific tag.
 - Configure the plugin settings via Picard's Plugins settings to customize which tags to process and the character mappings.
 
 ## Configuration
