@@ -2,7 +2,7 @@
 name = "picard-plugin-replace_unwanted_characters"
 version = "0.0.0"
 readme = "README.md"
-description = "The Plugin replaces unwanted characters in tags."
+description = "A Plugin to replaces unwanted characters in tags."
 keywords = ["musicbrainz", "picard", "plugin", "music", "organization"]
 license = {file = "LICENSE"}
 authors = [

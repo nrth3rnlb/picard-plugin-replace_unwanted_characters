@@ -48,4 +48,3 @@ The plugin ships with a sensible default mapping, e.g.:
 Project layout:
 - `replace_unwanted_characters/__init__.py` — plugin implementation
 - `replace_unwanted_characters/replace_unwanted_characters_config.ui` — Qt UI for options
-- 
