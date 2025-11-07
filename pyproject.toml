@@ -1,0 +1,100 @@
+[project]
+name = "picard-plugin-replace_unwanted_characters"
+version = "0.0.0"
+readme = "README.md"
+description = "The Plugin replaces unwanted characters in tags."
+keywords = ["musicbrainz", "picard", "plugin", "music", "organization"]
+license = {file = "LICENSE"}
+authors = [
+    {name = "nrth3rnlb"}
+]
+requires-python = ">=3.8"
+dependencies = [
+    "PyQt5>=5.15.0",
+    "PyYAML>=6.0",
+    "fasteners~=0.14",
+    "Markdown~=3.2",
+    "mutagen~=1.37",
+    "PyJWT~=2.0",
+    "python-dateutil~=2.7",
+    "python_libdiscid~=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "mypy>=1.3.0",
+    "python-semantic-release>=7.23.3",
+]
+
+[tool.setuptools.packages.find]
+include = ["replace_unwanted_characters*"]
+exclude = ["tests*"]
+
+[tool.coverage.run]
+source = ["replace_unwanted_characters"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/ui_*.py",
+    "*_ui.py"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod"
+]
+
+[tool.mypy]
+exclude = [
+    "ui_.*\\.py$",
+    ".*_ui\\.py$"
+]
+ignore_missing_imports = true
+warn_unused_ignores = false
+
+[tool.ruff]
+exclude = [
+    "ui_*.py",
+    "*_ui.py",
+    "__pycache__",
+    ".git",
+    ".venv",
+    "venv"
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]  # Line too long
+
+[tool.pylint.main]
+ignore-patterns = ["ui_.*\\.py", ".*_ui\\.py"]
+
+[tool.semantic_release]
+tag_format = "v{version}"
+version_toml = ["pyproject.toml:project.version:nf"]
+version_variables = ["replace_unwanted_characters/__init__.py:__version__:nf"]
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+output_format = "md"
+
+[tool.semantic_release.changelog]
+# Recommended patterns for conventional commits parser that is scope aware
+exclude_commit_patterns = [
+    '''chore(?:\([^)]*?\))?: .+''',
+    '''ci(?:\([^)]*?\))?: .+''',
+    '''refactor(?:\([^)]*?\))?: .+''',
+    '''style(?:\([^)]*?\))?: .+''',
+    '''test(?:\([^)]*?\))?: .+''',
+    '''build\((?!deps\): .+)''',
+    '''Initial [Cc]ommit.*''',
+]
