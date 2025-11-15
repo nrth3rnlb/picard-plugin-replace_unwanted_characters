@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.1.2 (2025-11-15)
+
+### Bug Fixes
+
+- **settings_ui**: ReplaceUnwantedCharactersOptionsPage.save is too complex (18) (MC0001)
+  ([`cf965ea`](https://github.com/nrth3rnlb/picard-plugin-replace_unwanted_characters/commit/cf965ea5313b73d1761871a8cf40d063ad8c568c))
+
+
 ## v1.1.1 (2025-11-15)
 
 ### Bug Fixes
