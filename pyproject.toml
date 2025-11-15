@@ -8,7 +8,7 @@ license = {file = "LICENSE"}
 authors = [
     {name = "nrth3rnlb"}
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "PyQt5>=5.15.0",
     "PyYAML>=6.0",
