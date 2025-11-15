@@ -6,7 +6,8 @@ from picard import log
 from picard.config import Option
 from picard.ui.options import OptionsPage
 
-from replace_unwanted_characters import DEFAULT_TAGS, DEFAULT_CHAR_MAPPING, PLUGIN_NAME, MultiSelectDialog
+from . import PLUGIN_NAME
+from .constants import DEFAULT_TAGS, DEFAULT_CHAR_MAPPING
 
 class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
     NAME = "replace_unwanted_characters"
@@ -187,19 +188,20 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
             explicit = tag in per_tag_saved
             log.debug(f"{PLUGIN_NAME}: Building per-tag table row for tag '{tag}': explicit={explicit}")
 
-
             # UI widget stuff
             # Is Active checkbox
             active_chk = QtWidgets.QCheckBox()
             active_chk_container = QtWidgets.QWidget()
             active_chk_layout = QtWidgets.QHBoxLayout(active_chk_container)
             active_chk_layout.addWidget(active_chk)
+            # noinspection PyUnresolvedReferences
             active_chk_layout.setAlignment(QtCore.Qt.AlignCenter)
             active_chk_layout.setContentsMargins(0, 0, 0, 0)
             self.per_tag_table.setCellWidget(row, 0, active_chk_container)
 
             # Tag name item
             tag_item = QtWidgets.QTableWidgetItem(tag)
+            # noinspection PyUnresolvedReferences
             tag_item.setFlags(tag_item.flags() & ~QtCore.Qt.ItemIsEditable)
             self.per_tag_table.setItem(row, 1, tag_item)
 
@@ -208,6 +210,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
             default_chk_container = QtWidgets.QWidget()
             default_chk_layout = QtWidgets.QHBoxLayout(default_chk_container)
             default_chk_layout.addWidget(default_chk)
+            # noinspection PyUnresolvedReferences
             default_chk_layout.setAlignment(QtCore.Qt.AlignCenter)
             default_chk_layout.setContentsMargins(0, 0, 0, 0)
             self.per_tag_table.setCellWidget(row, 2, default_chk_container)
@@ -300,6 +303,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
         """
         Factory method that creates a handler function for the mapping button of a specific tag.
         """
+
         def on_button_clicked():
             all_keys = self._current_default_keys()
             current_selection = self._per_tag_selection.get(tag, set())
@@ -316,7 +320,6 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
     def on_default_table_changed(self, *args):
         self.rebuild_per_tag_table()
 
-
     def _make_use_default_handler(self, tag, button):
         """
         Creates a handler function for the 'use default' checkbox for a given tag.
@@ -326,6 +329,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
         - If unchecked, restores the saved selection and enables the mapping button.
         The handler also updates the button text to reflect the current selection.
         """
+
         def on_toggled(checked):
             all_keys = self._current_default_keys()
             if checked:
@@ -450,11 +454,14 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
                 use_default = isinstance(use_default_chk, QtWidgets.QCheckBox) and use_default_chk.isChecked()
                 is_active = isinstance(active_chk, QtWidgets.QCheckBox) and active_chk.isChecked()
 
-
                 selected_keys = self._per_tag_selection.get(tag, set())
-                per_tag_tables[tag] = {"keys": list(selected_keys), "active": bool(is_active), "default": bool(use_default)}
+                per_tag_tables[tag] = {
+                    "keys": list(selected_keys), "active": bool(is_active), "default": bool(use_default)
+                }
 
-                log.debug(f"{PLUGIN_NAME}: Saving per-tag table for tag '{tag}': use_default={use_default}, active={is_active}, keys={selected_keys}")
+                log.debug(
+                    f"{PLUGIN_NAME}: Saving per-tag table for tag '{tag}': use_default={use_default}, "
+                    f"active={is_active}, keys={selected_keys}")
 
         self.config.setting["replace_unwanted_characters_per_tag_tables"] = per_tag_tables
 
@@ -469,11 +476,14 @@ class MultiSelectDialog(QtWidgets.QDialog):
         self.list_widget = QtWidgets.QListWidget()
         for item_text in items:
             item = QtWidgets.QListWidgetItem(item_text)
+            # noinspection PyUnresolvedReferences
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
             is_checked = item_text in selected_items
+            # noinspection PyUnresolvedReferences
             item.setCheckState(QtCore.Qt.Checked if is_checked else QtCore.Qt.Unchecked)
             self.list_widget.addItem(item)
 
+        # noinspection PyUnresolvedReferences
         self.buttons = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
             QtCore.Qt.Horizontal, self)
@@ -489,6 +499,7 @@ class MultiSelectDialog(QtWidgets.QDialog):
         selected = set()
         for i in range(self.list_widget.count()):
             item = self.list_widget.item(i)
+            # noinspection PyUnresolvedReferences
             if item.checkState() == QtCore.Qt.Checked:
                 selected.add(item.text())
         return selected
