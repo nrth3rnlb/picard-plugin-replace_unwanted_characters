@@ -5,7 +5,6 @@ Options page for the Replace Unwanted Characters plugin.
 """
 
 import os
-
 from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtWidgets import QHeaderView
 from picard import log
@@ -13,8 +12,6 @@ from picard.config import Option
 from picard.ui.options import OptionsPage
 
 from .constants import DEFAULT_TAGS, DEFAULT_CHAR_MAPPING
-
-
 
 PLUGIN_NAME = "Replace Unwanted Characters"
 

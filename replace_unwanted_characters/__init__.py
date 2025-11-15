@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import os
-
 from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtWidgets import QHeaderView
+from picard import config, log
 from picard import metadata
 from picard.config import Option
 from picard.script import register_script_function
 from picard.ui.options import OptionsPage, register_options_page
-
-from picard import config, log
 
 __version__ = '1.1.0'
 
@@ -27,11 +25,19 @@ PLUGIN_API_VERSIONS = ["2.7", "2.8"]
 PLUGIN_LICENSE = "GPL-2.0"
 PLUGIN_LICENSE_URL = "https://www.gnu.org/licenses/gpl-2.0.html"
 PLUGIN_DESCRIPTION = '''
-    The "Replace Unwanted Characters" Plugin replaces unwanted characters in tags.
-    Also add $replace_unwanted() function for Tagger.
+## Replace Unwanted Characters
 
-    The plugin is based on an idea and the implementation in the "Replace Forbidden Symbols" plugin by Alex Rustler
-    <alex_rustler@rambler.ru>
+The *Replace Unwanted Characters* Plugin replaces unwanted characters in tags.
+
+### Features
+
+- Replace specified characters in configurable tags (default: `album`, `artist`, `title`, `albumartist`, `releasetype`, `label`).
+- Configurable default character mapping table.
+- Per-tag mappings: enable either the default mapping or a custom selection for each tag.
+- Tagger script function: `$replace_unwanted()` for use in Picard scripts.
+
+The plugin is based on an idea and the implementation in the "Replace Forbidden Symbols" plugin by Alex Rustler
+<alex_rustler@rambler.ru>
 '''
 
 def get_config_settings():
