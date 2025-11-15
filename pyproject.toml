@@ -1,6 +1,6 @@
 [project]
 name = "picard-plugin-replace_unwanted_characters"
-version = "1.1.0"
+version = "1.1.1"
 readme = "README.md"
 description = "A Plugin to replaces unwanted characters in tags."
 keywords = ["musicbrainz", "picard", "plugin", "music", "organization"]

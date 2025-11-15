@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v1.1.1 (2025-11-15)
+
+### Bug Fixes
+
+- Simplify config setting retrieval by removing redundant try-except blocks
+  ([`f051018`](https://github.com/nrth3rnlb/picard-plugin-replace_unwanted_characters/commit/f0510182fdde134f605c2b7741770a7578b00ed2))
+
+- **replace_unwanted_characters**: Add tooltips for configuration options
+  ([`98e0c61`](https://github.com/nrth3rnlb/picard-plugin-replace_unwanted_characters/commit/98e0c61084644440a009ac6098db86075b6eb397))
+
+
 ## v1.1.0 (2025-11-07)
 
 ### Bug Fixes
