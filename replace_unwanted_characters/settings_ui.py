@@ -1,19 +1,12 @@
-# -*- coding: utf-8 -*-
-
-"""
-Options page for the Replace Unwanted Characters plugin.
-"""
-
 import os
-from PyQt5 import QtWidgets, uic, QtCore
+
+from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtWidgets import QHeaderView
 from picard import log
 from picard.config import Option
 from picard.ui.options import OptionsPage
 
-from .constants import DEFAULT_TAGS, DEFAULT_CHAR_MAPPING
-
-PLUGIN_NAME = "Replace Unwanted Characters"
+from replace_unwanted_characters import DEFAULT_TAGS, DEFAULT_CHAR_MAPPING, PLUGIN_NAME, MultiSelectDialog
 
 class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
     NAME = "replace_unwanted_characters"
@@ -109,6 +102,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
     def _refresh_per_tag_data(self):
         rows = set(index.row() for index in self.filter_tags_table.selectedIndexes())
         for row in sorted(rows, reverse=True):
+            # remove selection state for tag if present
             item = self.filter_tags_table.item(row, 0)
             if item:
                 tag = item.text()
@@ -184,10 +178,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
         # convert available keys to a set for containment checks
         all_keys = set(self._current_default_keys())
 
-        try:
-            per_tag_saved = self.config.setting["replace_unwanted_characters_per_tag_tables"]
-        except KeyError:
-            per_tag_saved = {}
+        per_tag_saved = self.config.setting["replace_unwanted_characters_per_tag_tables"]
 
         for tag in tags:
             row = self.per_tag_table.rowCount()
@@ -281,10 +272,6 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
         Shows an indicator when 'Use Default' is active.
         """
         log.debug(f"{PLUGIN_NAME}: Updating mapping button text for tag '{tag}'")
-        # # If using default, show a default indicator
-        # if self._is_use_default_for_tag(tag):
-        #     button.setText(f"{len(all_keys)} selected (default)")
-        #     return
 
         selected_keys = sorted(list(self._per_tag_selection.get(tag, set())))
         log.debug(f"{PLUGIN_NAME}: Selected keys for tag '{tag}': {selected_keys}")
@@ -359,10 +346,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
     # ---------- load / save ----------
     def load(self):
         # Load filter tags
-        try:
-            filter_tags = self.config.setting["replace_unwanted_characters_filter_tags"]
-        except KeyError:
-            filter_tags = DEFAULT_TAGS
+        filter_tags = self.config.setting["replace_unwanted_characters_filter_tags"]
 
         # Populate filter_tags_table if present in UI
         if hasattr(self, "filter_tags_table"):
@@ -372,11 +356,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
                 self.filter_tags_table.insertRow(row)
                 self.filter_tags_table.setItem(row, 0, QtWidgets.QTableWidgetItem(tag))
 
-        # Load default replacement table
-        try:
-            char_table = self.config.setting["replace_unwanted_characters_char_table"]
-        except KeyError:
-            char_table = DEFAULT_CHAR_MAPPING
+        char_table = self.config.setting["replace_unwanted_characters_char_table"]
 
         if hasattr(self, "replacement_table"):
             self.replacement_table.setRowCount(0)
@@ -387,12 +367,7 @@ class ReplaceUnwantedCharactersOptionsPage(OptionsPage):
                 self.replacement_table.setItem(row, 1, QtWidgets.QTableWidgetItem(replace))
 
         # Load per-tag tables (optional)
-        try:
-            per_tag = self.config.setting["replace_unwanted_characters_per_tag_tables"]
-        except KeyError:
-            per_tag = {}
-
-        log.debug(f"{PLUGIN_NAME}: Loaded per-tag tables from config: {per_tag}")
+        per_tag = self.config.setting["replace_unwanted_characters_per_tag_tables"]
 
         # Initialize in-memory selection dicts from config (per_tag maps tag -> list of enabled keys or dict)
         self._per_tag_selection = {}
