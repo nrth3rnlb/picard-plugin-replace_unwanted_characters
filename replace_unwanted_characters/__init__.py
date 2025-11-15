@@ -8,7 +8,7 @@ from picard.ui.options import register_options_page
 
 PLUGIN_NAME = "Replace Unwanted Characters"
 PLUGIN_AUTHOR = "nrth3rnlb"
-PLUGIN_VERSION = "1.1.3"
+PLUGIN_VERSION = "1.0"
 PLUGIN_API_VERSIONS = ["2.7", "2.8"]
 PLUGIN_LICENSE = "GPL-2.0"
 PLUGIN_LICENSE_URL = "https://www.gnu.org/licenses/gpl-2.0.html"
